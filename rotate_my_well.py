@@ -5,26 +5,6 @@ Created on Tue Nov 19 03:07:09 2019
 @author: GOGUT
 script to rotate your well 
 """
-# =============================================================================
-# INPUT DATA:
-# =============================================================================
-from pathlib import Path, PureWindowsPath
-# I've explicitly declared my path as being in Windows format, so I can use forward slashes in it.
-data_folder = PureWindowsPath(r"Y:\ressim\lavani-deep\dg2\simu1\new_well_paths_ref_case_aquifer\include\well_paths\Rotated_wellpaths")
-data_name = "LS1NW_NEW.xlsx"
-# Convert path to the right format for the current operating system
-correct_path = Path(data_folder / data_name)
-# prints "source_data/text_files/raw_data.txt" on Mac and Linux
-# prints "source_data\text_files\raw_data.txt" on Windows
-data_name_lenght = len(data_name)
-data_name_point = data_name.find('.')
-rot_angle_degrees = -51
-data_name_new = data_name[0:data_name_point]+str(rot_angle_degrees)+data_name[-5:]
-data_name_new_txt = data_name[0:data_name_point]+str(rot_angle_degrees)+".dev"
-new_file = Path(data_folder / data_name_new)
-new_file2 = Path(data_folder / data_name_new_txt)
-print(new_file)
-print(new_file2)
 #
 #
 # =============================================================================
@@ -35,6 +15,37 @@ import math
 import pandas as pd
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 import matplotlib.pyplot as plt
+from pathlib import Path, PureWindowsPath
+#
+#
+# =============================================================================
+# INPUT DATA:
+# =============================================================================
+# I've explicitly declared my path as being in Windows format, so I can use forward slashes in it.
+data_folder = PureWindowsPath(r"Y:\ressim\lavani-deep\dg2\simu2\include\well_paths\Rotated_wellpaths")
+data_name = "LS2.xlsx"
+rot_angle_degrees = -19
+rotation_point_index = 32
+#
+#
+# =============================================================================
+# generating the file paths 
+# =============================================================================
+# Convert path to the right format for the current operating system
+correct_path = Path(data_folder / data_name)
+# prints "source_data/text_files/raw_data.txt" on Mac and Linux
+# prints "source_data\text_files\raw_data.txt" on Windows
+data_name_lenght = len(data_name)
+data_name_point = data_name.find('.')
+data_name_new = data_name[0:data_name_point]+str(rot_angle_degrees)+data_name[-5:]
+data_name_new_txt = data_name[0:data_name_point]+str(rot_angle_degrees)+".dev"
+new_file = Path(data_folder / data_name_new)
+new_file2 = Path(data_folder / data_name_new_txt)
+print(new_file)
+print(new_file2)
+#
+#
+
 #
 #
 # =============================================================================
@@ -64,8 +75,8 @@ df['ratio Disp/MD_diff']= df['Disp']/df['MD_diff'] # ratio. intermediate calcula
 df['Incl_degrees']= [math.degrees(math.asin(row)) for row in df['ratio Disp/MD_diff']] # Calculates the inclication at each survey.
 df['Cum.Disp'].fillna(0,inplace=True) # replacing from nan values to cero.
 df2= df[['East_X','North_Y','MDMSL','Cum.Disp','TVD_neg','Incl_degrees']] # final dataset df2
-df2['xrot']=Rotatepointx(df2['East_X'],df2['North_Y'],df2['East_X'].iloc[31],df2['North_Y'].iloc[31],rot_angle_degrees) # East_x rotated arround first point.
-df2['yrot']=Rotatepointy(df2['East_X'],df2['North_Y'],df2['East_X'].iloc[31],df2['North_Y'].iloc[31],rot_angle_degrees) # North_y rotated arround first point.
+df2['xrot']=Rotatepointx(df2['East_X'],df2['North_Y'],df2['East_X'].iloc[rotation_point_index],df2['North_Y'].iloc[rotation_point_index],rot_angle_degrees) # East_x rotated arround first point.
+df2['yrot']=Rotatepointy(df2['East_X'],df2['North_Y'],df2['East_X'].iloc[rotation_point_index],df2['North_Y'].iloc[rotation_point_index],rot_angle_degrees) # North_y rotated arround first point.
 #
 #
 # =============================================================================
@@ -92,7 +103,7 @@ ax.set_xlabel('East_X')
 ax.set_ylabel('North_Y')
 ax.set_zlabel('Z TVD')
 #
-
+#
 # =============================================================================
 # generates xlsx file with df2 as feed
 # =============================================================================
